@@ -3,48 +3,53 @@
 @section('header', 'Categories')
 
 @section('content')
-<div class="flex justify-between items-center mb-6">
-    <h2 class="text-lg font-bold">Category List</h2>
-    <a href="{{ route('admin.categories.create') }}" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-secondary transition shadow-sm">
-        Add Category
-    </a>
-</div>
-
-<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-left">
-            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-medium">
-                <tr>
-                    <th class="px-6 py-4">Name</th>
-                    <th class="px-6 py-4">Slug</th>
-                    <th class="px-6 py-4">Products</th>
-                    <th class="px-6 py-4">Created At</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                @forelse($categories as $category)
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="px-6 py-4 text-sm font-semibold text-slate-700">{{ $category->name }}</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">{{ $category->slug }}</td>
-                    <td class="px-6 py-4 text-sm">{{ $category->products_count }} Products</td>
-                    <td class="px-6 py-4 text-sm text-slate-500">{{ $category->created_at->format('d M Y') }}</td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{{ route('admin.categories.edit', $category) }}" class="text-primary hover:text-secondary text-sm font-medium">Edit</a>
-                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium" onclick="return confirm('Delete this category?')">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-10 text-center text-slate-400 text-sm">No categories found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+<div class="row column1">
+    <div class="col-md-12">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0 d-flex justify-content-between align-items-center w-100">
+                    <h2>Category List</h2>
+                    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary btn-sm">Add Category</a>
+                </div>
+            </div>
+            <div class="table_section padding_infor_info">
+                <div class="table-responsive-sm">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Slug</th>
+                                <th>Products</th>
+                                <th>Created At</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($categories as $category)
+                            <tr>
+                                <td><strong>{{ $category->name }}</strong></td>
+                                <td>{{ $category->slug }}</td>
+                                <td><span class="badge badge-info">{{ $category->products_count }} Products</span></td>
+                                <td>{{ $category->created_at->format('d M Y') }}</td>
+                                <td class="text-right">
+                                    <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-warning btn-sm"><i class="fa fa-pencil" style="color: white;"></i></a>
+                                    <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this category?')"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center">No categories found.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 @endsection

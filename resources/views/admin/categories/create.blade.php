@@ -3,31 +3,36 @@
 @section('header', 'Create Category')
 
 @section('content')
-<div class="max-w-2xl">
-    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-        <form action="{{ route('admin.categories.store') }}" method="POST" class="space-y-6">
-            @csrf
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Category Name</label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition outline-none" placeholder="e.g. Source Code, Assets">
-                @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+<div class="row column1">
+    <div class="col-md-12">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0">
+                    <h2>Create New Category</h2>
+                </div>
             </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
-                <textarea name="description" rows="4" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition outline-none" placeholder="Enter category description...">{{ old('description') }}</textarea>
-                @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+            <div class="padding_infor_info">
+                <form action="{{ route('admin.categories.store') }}" method="POST">
+                    @csrf
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold">Category Name</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required class="form-control" placeholder="e.g. Source Code, Assets">
+                        @error('name') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="font-weight-bold">Description</label>
+                        <textarea name="description" rows="4" class="form-control" placeholder="Enter category description...">{{ old('description') }}</textarea>
+                        @error('description') <small class="text-danger">{{ $message }}</small> @enderror
+                    </div>
 
-            <div class="flex space-x-3 pt-4">
-                <button type="submit" class="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-secondary transition shadow-lg shadow-primary/20">
-                    Create Category
-                </button>
-                <a href="{{ route('admin.categories.index') }}" class="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-semibold hover:bg-slate-200 transition">
-                    Cancel
-                </a>
+                    <div class="form-group mt-4 pt-2">
+                        <button type="submit" class="btn btn-primary">Create Category</button>
+                        <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 @endsection

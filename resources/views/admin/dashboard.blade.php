@@ -1,86 +1,276 @@
 @extends('layouts.admin')
 
-@section('header', 'Overview')
+@section('header', 'Dashboard')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- Stat Cards -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        </div>
-        <div>
-            <p class="text-sm text-slate-500">Revenue</p>
-            <p class="text-2xl font-bold">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</p>
-        </div>
-    </div>
-
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-        </div>
-        <div>
-            <p class="text-sm text-slate-500">Orders</p>
-            <p class="text-2xl font-bold">{{ $stats['total_orders'] }}</p>
+<div class="row column1">
+    <div class="col-md-6 col-lg-3">
+        <div class="full counter_section margin_bottom_30">
+            <div class="couter_icon">
+                <div> 
+                <i class="fa fa-money yellow_color"></i>
+                </div>
+            </div>
+            <div class="counter_no">
+                <div>
+                <p class="total_no" style="font-size: 20px;">Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}</p>
+                <p class="head_couter">Revenue</p>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-        </div>
-        <div>
-            <p class="text-sm text-slate-500">Products</p>
-            <p class="text-2xl font-bold">{{ $stats['total_products'] }}</p>
+    <div class="col-md-6 col-lg-3">
+        <div class="full counter_section margin_bottom_30">
+            <div class="couter_icon">
+                <div> 
+                <i class="fa fa-shopping-cart blue1_color"></i>
+                </div>
+            </div>
+            <div class="counter_no">
+                <div>
+                <p class="total_no" style="font-size: 24px;">{{ $stats['total_orders'] }}</p>
+                <p class="head_couter">Orders</p>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
-        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 01-9-3.47m0-3.53a4 4 0 110-8m5 13H15m0 0V5a2 2 0 10-4 0v2m-2 4h4a2 2 0 012 2v3a2 2 0 01-2 2h-4a2 2 0 01-2-2v-3a2 2 0 012-2z"></path></svg>
+    <div class="col-md-6 col-lg-3">
+        <div class="full counter_section margin_bottom_30">
+            <div class="couter_icon">
+                <div> 
+                <i class="fa fa-cubes green_color"></i>
+                </div>
+            </div>
+            <div class="counter_no">
+                <div>
+                <p class="total_no" style="font-size: 24px;">{{ $stats['total_products'] }}</p>
+                <p class="head_couter">Products</p>
+                </div>
+            </div>
         </div>
-        <div>
-            <p class="text-sm text-slate-500">Customers</p>
-            <p class="text-2xl font-bold">{{ $stats['total_users'] }}</p>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="full counter_section margin_bottom_30">
+            <div class="couter_icon">
+                <div> 
+                <i class="fa fa-users red_color"></i>
+                </div>
+            </div>
+            <div class="counter_no">
+                <div>
+                <p class="total_no" style="font-size: 24px;">{{ $stats['total_users'] }}</p>
+                <p class="head_couter">Customers</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-    <div class="p-6 border-b border-slate-100">
-        <h3 class="text-lg font-bold">Recent Orders</h3>
+<div class="row column1 social_media_section">
+    <div class="col-md-6 col-lg-3">
+        <div class="full socile_icons fb margin_bottom_30">
+            <div class="social_icon">
+                <i class="fa fa-facebook"></i>
+            </div>
+            <div class="social_cont">
+                <ul>
+                <li>
+                    <span><strong>35k</strong></span>
+                    <span>Friends</span>
+                </li>
+                <li>
+                    <span><strong>128</strong></span>
+                    <span>Feeds</span>
+                </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-left">
-            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-medium">
-                <tr>
-                    <th class="px-6 py-4">Order ID</th>
-                    <th class="px-6 py-4">Customer</th>
-                    <th class="px-6 py-4">Total</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4">Date</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                @forelse($recent_orders as $order)
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="px-6 py-4 text-sm font-semibold">#{{ $order->order_number }}</td>
-                    <td class="px-6 py-4 text-sm">{{ $order->user->name }}</td>
-                    <td class="px-6 py-4 text-sm">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full {{ $order->status == 'completed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
-                            {{ ucfirst($order->status) }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-slate-500">{{ $order->created_at->format('d M Y') }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="px-6 py-10 text-center text-slate-400">No orders yet.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="col-md-6 col-lg-3">
+        <div class="full socile_icons tw margin_bottom_30">
+            <div class="social_icon">
+                <i class="fa fa-twitter"></i>
+            </div>
+            <div class="social_cont">
+                <ul>
+                <li>
+                    <span><strong>584k</strong></span>
+                    <span>Followers</span>
+                </li>
+                <li>
+                    <span><strong>978</strong></span>
+                    <span>Tweets</span>
+                </li>
+                </ul>
+            </div>
+        </div>
     </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="full socile_icons linked margin_bottom_30">
+            <div class="social_icon">
+                <i class="fa fa-linkedin"></i>
+            </div>
+            <div class="social_cont">
+                <ul>
+                <li>
+                    <span><strong>758+</strong></span>
+                    <span>Contacts</span>
+                </li>
+                <li>
+                    <span><strong>365</strong></span>
+                    <span>Feeds</span>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="full socile_icons google_p margin_bottom_30">
+            <div class="social_icon">
+                <i class="fa fa-google-plus"></i>
+            </div>
+            <div class="social_cont">
+                <ul>
+                <li>
+                    <span><strong>450</strong></span>
+                    <span>Followers</span>
+                </li>
+                <li>
+                    <span><strong>57</strong></span>
+                    <span>Circles</span>
+                </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- graph -->
+<div class="row column2 graph margin_bottom_30">
+    <div class="col-md-l2 col-lg-12">
+        <div class="white_shd full">
+            <div class="full graph_head">
+                <div class="heading1 margin_0">
+                <h2>Recent Orders</h2>
+                </div>
+            </div>
+            <div class="full graph_revenue p-4">
+                <div class="table-responsive">
+                    <table class="table table-striped w-100">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recent_orders as $order)
+                            <tr>
+                                <td>#{{ $order->order_number }}</td>
+                                <td>{{ $order->user->name }}</td>
+                                <td>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                                <td>
+                                    <span class="badge {{ $order->status == 'completed' ? 'badge-success' : 'badge-warning' }}">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                                <td>{{ $order->created_at->format('d M Y') }}</td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="text-center">No orders yet.</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end graph -->
+<div class="row column3">
+    <!-- testimonial -->
+    <div class="col-md-6">
+        <div class="dark_bg full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0">
+                <h2>Testimonial</h2>
+                </div>
+            </div>
+            <div class="full graph_revenue">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="content testimonial">
+                        <div id="testimonial_slider" class="carousel slide" data-ride="carousel">
+                            <!-- Wrapper for carousel items -->
+                            <div class="carousel-inner">
+                            <div class="item carousel-item active">
+                                <div class="img-box"><img src="https://themewagon.github.io/pluto/images/layout_img/user_img.jpg" onerror="this.src='https://via.placeholder.com/75x75?text=User'" alt=""></div>
+                                <p class="testimonial">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae..</p>
+                                <p class="overview"><b>Michael Stuart</b>Seo Founder</p>
+                            </div>
+                            <div class="item carousel-item">
+                                <div class="img-box"><img src="https://themewagon.github.io/pluto/images/layout_img/user_img.jpg" onerror="this.src='https://via.placeholder.com/75x75?text=User'" alt=""></div>
+                                <p class="testimonial">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae..</p>
+                                <p class="overview"><b>Michael Stuart</b>Seo Founder</p>
+                            </div>
+                            </div>
+                            <!-- Carousel controls -->
+                            <a class="carousel-control left carousel-control-prev" href="#testimonial_slider" data-slide="prev">
+                            <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a class="carousel-control right carousel-control-next" href="#testimonial_slider" data-slide="next">
+                            <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end testimonial -->
+    <!-- progress bar -->
+    <div class="col-md-6">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0">
+                <h2>Progress Bar</h2>
+                </div>
+            </div>
+            <div class="full progress_bar_inner">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="progress_bar">
+                        <!-- Skill Bars -->
+                        <span class="skill" style="width:73%;">Facebook <span class="info_valume">73%</span></span>                  
+                        <div class="progress skill-bar ">
+                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="73" aria-valuemin="0" aria-valuemax="100" style="width: 73%;">
+                            </div>
+                        </div>
+                        <span class="skill" style="width:62%;">Twitter <span class="info_valume">62%</span></span>   
+                        <div class="progress skill-bar">
+                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="62" aria-valuemin="0" aria-valuemax="100" style="width: 62%;">
+                            </div>
+                        </div>
+                        <span class="skill" style="width:54%;">Instagram <span class="info_valume">54%</span></span>
+                        <div class="progress skill-bar">
+                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="54" aria-valuemin="0" aria-valuemax="100" style="width: 54%;">
+                            </div>
+                        </div>
+                        <span class="skill" style="width:82%;">Google plus <span class="info_valume">82%</span></span>
+                        <div class="progress skill-bar">
+                            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100" style="width: 82%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end progress bar -->
 </div>
 @endsection
