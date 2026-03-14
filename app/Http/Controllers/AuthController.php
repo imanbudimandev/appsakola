@@ -24,6 +24,10 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
+            if ($request->has('redirect')) {
+                return redirect($request->redirect);
+            }
+            
             if (auth()->user()->isAdmin()) {
                 return redirect()->intended(route('admin.dashboard'));
             }
@@ -56,6 +60,10 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+        
+        if ($request->has('redirect')) {
+            return redirect($request->redirect);
+        }
 
         return redirect(route('member.dashboard'));
     }

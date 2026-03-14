@@ -101,9 +101,9 @@
                                 <span class="text-xl font-extrabold text-slate-900">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                             @endif
                         </div>
-                        <button class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center group-hover:bg-primary transition shadow-xl shadow-slate-900/10 group-hover:shadow-primary/20">
+                        <a href="{{ route('member.orders.checkout', $product->slug) }}" class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center group-hover:bg-primary transition shadow-xl shadow-slate-900/10 group-hover:shadow-primary/20">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

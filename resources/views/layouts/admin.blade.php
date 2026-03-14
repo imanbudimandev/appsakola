@@ -30,6 +30,22 @@
       <link rel="stylesheet" href="https://themewagon.github.io/pluto/css/custom.css" />
       <!-- fontawesome from CDN for icons if local missing -->
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+      <style>
+         .midde_cont {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 60px); /* 60px is topbar height */
+         }
+         .midde_cont > .container-fluid:first-child {
+            flex: 1;
+         }
+         .footer {
+            margin-top: auto;
+            background: #fff;
+            padding: 20px 30px;
+            width: 100%;
+         }
+      </style>
       <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -144,9 +160,7 @@
                   <!-- footer -->
                   <div class="container-fluid">
                      <div class="footer">
-                        <p>Copyright © {{ date('Y') }} Designed by html.design. All rights reserved.<br><br>
-                           Distributed By: <a href="https://themewagon.com/">ThemeWagon</a>
-                        </p>
+                        <p>{!! \App\Models\Setting::get('site_footer', 'Copyright © ' . date('Y') . ' Appsakola. All rights reserved.') !!}</p>
                      </div>
                   </div>
                </div>

@@ -8,13 +8,15 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Member\DashboardController as MemberDashboardController;
+use App\Http\Controllers\Member\OrderController as MemberOrderController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('landing');
 
 // Auth Routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -22,6 +24,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Midtrans Webhook
+Route::post('/midtrans/notification', [PaymentController::class, 'notification']);
 
 // Admin Routes
 Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix('admin')->name('admin.')->group(function () {
@@ -70,6 +75,13 @@ Route::get('/check-storage', function () {
 });
 
 // Member Routes
+Route::get('/checkout/{product:slug}', [MemberOrderController::class, 'checkout'])->name('member.orders.checkout');
+
 Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
     Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
+    
+    // Checkout & Orders
+    Route::post('/checkout/{product:slug}', [MemberOrderController::class, 'process'])->name('orders.process');
+    Route::get('/orders', [MemberOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [MemberOrderController::class, 'show'])->name('orders.show');
 });

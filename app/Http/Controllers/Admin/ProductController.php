@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -49,9 +50,13 @@ class ProductController extends Controller
             $thumbnail = $request->file('thumbnail');
             if ($thumbnail && $thumbnail->isValid()) {
                 $filename = time() . '_' . Str::slug($request->name) . '.' . $thumbnail->getClientOriginalExtension();
-                $path = $thumbnail->storeAs('thumbnails', $filename, 'public');
-                if ($path) {
+                $path = 'thumbnails/' . $filename;
+                
+                try {
+                    Storage::disk('public')->put($path, file_get_contents($thumbnail->getPathname()));
                     $product->thumbnail = $path;
+                } catch (\Throwable $e) {
+                    // Log or handle error if needed
                 }
             }
         }
@@ -60,9 +65,13 @@ class ProductController extends Controller
             $file = $request->file('file_path');
             if ($file && $file->isValid()) {
                 $filename = time() . '_' . Str::slug($request->name) . '_file.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'local');
-                if ($path) {
+                $path = 'products/' . $filename;
+                
+                try {
+                    Storage::disk('local')->put($path, file_get_contents($file->getPathname()));
                     $product->file_path = $path;
+                } catch (\Throwable $e) {
+                    // Log or handle error if needed
                 }
             }
         }
@@ -103,22 +112,36 @@ class ProductController extends Controller
         if ($request->hasFile('thumbnail')) {
             $thumbnail = $request->file('thumbnail');
             if ($thumbnail && $thumbnail->isValid()) {
-                $filename = time() . '_' . Str::slug($request->name) . '.' . $thumbnail->getClientOriginalExtension();
-                $path = $thumbnail->storeAs('thumbnails', $filename, 'public');
-                if ($path) {
-                    $product->thumbnail = $path;
+                // Delete old thumbnail
+                if ($product->thumbnail) {
+                    Storage::disk('public')->delete($product->thumbnail);
                 }
+                
+                $filename = time() . '_' . Str::slug($request->name) . '.' . $thumbnail->getClientOriginalExtension();
+                $path = 'thumbnails/' . $filename;
+                
+                try {
+                    Storage::disk('public')->put($path, file_get_contents($thumbnail->getPathname()));
+                    $product->thumbnail = $path;
+                } catch (\Throwable $e) { }
             }
         }
 
         if ($request->hasFile('file_path')) {
             $file = $request->file('file_path');
             if ($file && $file->isValid()) {
-                $filename = time() . '_' . Str::slug($request->name) . '_file.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'local');
-                if ($path) {
-                    $product->file_path = $path;
+                // Delete old file
+                if ($product->file_path) {
+                    Storage::disk('local')->delete($product->file_path);
                 }
+                
+                $filename = time() . '_' . Str::slug($request->name) . '_file.' . $file->getClientOriginalExtension();
+                $path = 'products/' . $filename;
+                
+                try {
+                    Storage::disk('local')->put($path, file_get_contents($file->getPathname()));
+                    $product->file_path = $path;
+                } catch (\Throwable $e) { }
             }
         }
 

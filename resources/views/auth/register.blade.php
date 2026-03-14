@@ -10,6 +10,9 @@
 
         <form action="{{ route('register') }}" method="POST" class="space-y-4">
             @csrf
+            @if(request()->has('redirect'))
+                <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+            @endif
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
                 <input type="text" name="name" value="{{ old('name') }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition outline-none" placeholder="John Doe">

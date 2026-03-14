@@ -74,7 +74,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-slate-800">No purchases found</h3>
                 <p class="text-slate-500 mt-2">Explore our products and start building your collection.</p>
-                <a href="/" class="inline-block mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-secondary transition shadow-lg shadow-primary/20">
+                <a href="{{ route('landing') }}" class="inline-block mt-8 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-secondary transition shadow-lg shadow-primary/20">
                     Browse Products
                 </a>
             </div>

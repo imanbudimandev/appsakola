@@ -10,6 +10,9 @@
 
         <form action="{{ route('login') }}" method="POST" class="space-y-6">
             @csrf
+            @if(request()->has('redirect'))
+                <input type="hidden" name="redirect" value="{{ request('redirect') }}">
+            @endif
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
                 <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/10 transition outline-none" placeholder="name@example.com">
@@ -33,7 +36,7 @@
             </button>
 
             <p class="text-center text-sm text-slate-600">
-                Don't have an account? <a href="{{ route('register') }}" class="text-primary font-medium">Create one</a>
+                Don't have an account? <a href="{{ route('register') }}{{ request()->has('redirect') ? '?redirect=' . urlencode(request('redirect')) : '' }}" class="text-primary font-medium">Create one</a>
             </p>
         </form>
     </div>

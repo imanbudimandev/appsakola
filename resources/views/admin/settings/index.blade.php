@@ -17,16 +17,22 @@
                 </div>
                 <div class="padding_infor_info">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-4">
                                 <label class="font-weight-bold">Site Name</label>
                                 <input type="text" name="site_name" value="{{ \App\Models\Setting::get('site_name', 'Appsakola') }}" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group mb-4">
                                 <label class="font-weight-bold">Contact Email</label>
                                 <input type="email" name="contact_email" value="{{ \App\Models\Setting::get('contact_email', 'support@appsakola.com') }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-4">
+                                <label class="font-weight-bold">Footer Text</label>
+                                <input type="text" name="site_footer" value="{{ \App\Models\Setting::get('site_footer', 'Copyright © ' . date('Y') . ' Appsakola. All rights reserved.') }}" class="form-control">
                             </div>
                         </div>
                     </div>

@@ -41,7 +41,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                        <a href="{{ route('landing') }}" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                             appsakola
                         </a>
                     </div>
@@ -69,7 +69,7 @@
         <!-- Footer -->
         <footer class="bg-white border-t border-slate-200 py-8">
             <div class="max-w-7xl mx-auto px-4 text-center">
-                <p class="text-slate-500 text-sm">&copy; {{ date('Y') }} Appsakola. All rights reserved.</p>
+                <p class="text-slate-500 text-sm">{!! \App\Models\Setting::get('site_footer', 'Copyright © ' . date('Y') . ' Appsakola. All rights reserved.') !!}</p>
             </div>
         </footer>
     </div>
