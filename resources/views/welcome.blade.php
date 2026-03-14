@@ -10,19 +10,18 @@
     
     <div class="max-w-7xl mx-auto px-4 text-center">
         <h1 class="text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-8">
-            Digital Products for <br>
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Modern Developers</span>
+            {!! \App\Models\Setting::get('hero_title', 'Digital Products for <br><span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary to-secondary">Modern Developers</span>') !!}
         </h1>
         <p class="text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Premium source codes, UI kits, and digital assets to accelerate your development workflow. Built with quality in mind.
+            {{ \App\Models\Setting::get('hero_subtitle', 'Premium source codes, UI kits, and digital assets to accelerate your development workflow. Built with quality in mind.') }}
         </p>
         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <a href="#products" class="px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-secondary transition shadow-2xl shadow-primary/40 flex items-center space-x-2">
-                <span>Browse Marketplace</span>
+            <a href="{{ \App\Models\Setting::get('hero_primary_btn_link', '#products') }}" class="px-8 py-4 bg-secondary text-white rounded-2xl font-bold hover:bg-primary transition shadow-2xl shadow-secondary/40 flex items-center space-x-2">
+                <span>{{ \App\Models\Setting::get('hero_primary_btn_text', 'Browse Marketplace') }}</span>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </a>
-            <a href="/register" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold hover:bg-slate-50 transition">
-                Become a Member
+            <a href="{{ \App\Models\Setting::get('hero_secondary_btn_link', '/register') }}" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold hover:bg-slate-50 transition">
+                {{ \App\Models\Setting::get('hero_secondary_btn_text', 'Become a Member') }}
             </a>
         </div>
     </div>
@@ -31,22 +30,12 @@
 <!-- Stats Section -->
 <section class="max-w-7xl mx-auto px-4 mb-32">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 bg-white/50 backdrop-blur-md border border-slate-200 p-10 rounded-[32px]">
+        @for($i = 1; $i <= 4; $i++)
         <div class="text-center">
-            <p class="text-3xl font-bold text-slate-900 mb-1">500+</p>
-            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest">Products</p>
+            <p class="text-3xl font-bold text-slate-900 mb-1">{{ \App\Models\Setting::get('stat_'.$i.'_value') }}</p>
+            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest">{{ \App\Models\Setting::get('stat_'.$i.'_label') }}</p>
         </div>
-        <div class="text-center">
-            <p class="text-3xl font-bold text-slate-900 mb-1">12K+</p>
-            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest">Happy Users</p>
-        </div>
-        <div class="text-center">
-            <p class="text-3xl font-bold text-slate-900 mb-1">24/7</p>
-            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest">Support</p>
-        </div>
-        <div class="text-center">
-            <p class="text-3xl font-bold text-slate-900 mb-1">100%</p>
-            <p class="text-sm text-slate-500 uppercase font-bold tracking-widest">Safe</p>
-        </div>
+        @endfor
     </div>
 </section>
 
@@ -54,15 +43,15 @@
 <section id="products" class="max-w-7xl mx-auto px-4 mb-32">
     <div class="flex justify-between items-end mb-12">
         <div>
-            <h2 class="text-4xl font-bold text-slate-900">Latest Drops</h2>
-            <p class="text-slate-500 mt-2">Check out our newest digital assets.</p>
+            <h2 class="text-4xl font-bold text-slate-900">{{ \App\Models\Setting::get('products_title', 'Latest Drops') }}</h2>
+            <p class="text-slate-500 mt-2">{{ \App\Models\Setting::get('products_subtitle', 'Check out our newest digital assets.') }}</p>
         </div>
         <div class="flex space-x-2">
             @php 
                 $categories = \App\Models\Category::all();
             @endphp
             @foreach($categories as $category)
-                <button class="px-5 py-2 rounded-full border border-slate-200 text-sm font-medium hover:border-primary hover:text-primary transition">
+                <button class="px-5 py-2 rounded-full border border-slate-200 text-sm font-medium hover:border-secondary hover:text-secondary transition">
                     {{ $category->name }}
                 </button>
             @endforeach
@@ -101,7 +90,7 @@
                                 <span class="text-xl font-extrabold text-slate-900">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
                             @endif
                         </div>
-                        <a href="{{ route('member.orders.checkout', $product->slug) }}" class="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center group-hover:bg-primary transition shadow-xl shadow-slate-900/10 group-hover:shadow-primary/20">
+                        <a href="{{ route('member.orders.checkout', $product->slug) }}" class="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center hover:bg-secondary transition shadow-xl shadow-primary/10 hover:shadow-secondary/20">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                         </a>
                     </div>

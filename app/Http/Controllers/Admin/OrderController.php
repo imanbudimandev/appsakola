@@ -23,15 +23,28 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,completed,failed,cancelled',
+            'status'         => 'required|in:pending,completed,failed,cancelled',
             'payment_status' => 'required|in:unpaid,paid,partially_paid',
         ]);
 
         $order->update([
-            'status' => $request->status,
+            'status'         => $request->status,
             'payment_status' => $request->payment_status,
         ]);
 
-        return back()->with('success', 'Order status updated.');
+        return back()->with('success', 'Status order berhasil diperbarui.');
+    }
+
+    /**
+     * Confirm manual bank transfer payment & mark order completed.
+     */
+    public function confirmPayment(Request $request, Order $order)
+    {
+        $order->update([
+            'payment_status' => 'paid',
+            'status'         => 'completed',
+        ]);
+
+        return back()->with('success', 'Pembayaran order #' . $order->order_number . ' telah dikonfirmasi. Member sekarang bisa download produk.');
     }
 }

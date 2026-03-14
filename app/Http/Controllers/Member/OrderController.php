@@ -50,32 +50,38 @@ class OrderController extends Controller
 
             if ($request->payment_method === 'midtrans') {
                 // Midtrans Integration
-                \Midtrans\Config::$serverKey = \App\Models\Setting::get('midtrans_server_key');
+                \Midtrans\Config::$serverKey  = \App\Models\Setting::get('midtrans_server_key');
                 \Midtrans\Config::$isProduction = (\App\Models\Setting::get('midtrans_is_production') == '1');
                 \Midtrans\Config::$isSanitized = true;
-                \Midtrans\Config::$is3ds = true;
+                \Midtrans\Config::$is3ds       = true;
 
                 $params = [
                     'transaction_details' => [
-                        'order_id' => $order->order_number,
-                        'gross_amount' => (int) $amount,
+                        'order_id'    => $order->order_number,
+                        'gross_amount'=> (int) $amount,
                     ],
                     'customer_details' => [
                         'first_name' => auth()->user()->name,
-                        'email' => auth()->user()->email,
+                        'email'      => auth()->user()->email,
                     ],
                     'item_details' => [
                         [
-                            'id' => $product->id,
-                            'price' => (int) $amount,
+                            'id'       => $product->id,
+                            'price'    => (int) $amount,
                             'quantity' => 1,
-                            'name' => $product->name,
+                            'name'     => $product->name,
                         ]
                     ],
                 ];
 
+                // Apply enabled payment methods if configured
+                $savedMethods = json_decode(\App\Models\Setting::get('midtrans_payment_methods', '[]'), true);
+                if (!empty($savedMethods)) {
+                    $params['enabled_payments'] = $savedMethods;
+                }
+
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
-                $order->update(['transaction_id' => $snapToken]); // We'll use this as temporary snap token storage or add a column
+                $order->update(['transaction_id' => $snapToken]);
                 
                 return redirect()->route('member.orders.show', $order);
             }
@@ -101,5 +107,105 @@ class OrderController extends Controller
     {
         $orders = Order::where('user_id', auth()->id())->latest()->get();
         return view('member.orders.index', compact('orders'));
+    }
+
+    public function download(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->payment_status !== 'paid') {
+            return back()->withErrors(['error' => 'Pembayaran belum dikonfirmasi. Silakan tunggu konfirmasi dari admin.']);
+        }
+
+        $order->load('items.product');
+        $product = $order->items->first()?->product;
+
+        if (!$product || !$product->file_path) {
+            return back()->withErrors(['error' => 'File produk tidak tersedia. Hubungi admin.']);
+        }
+
+        $filePath = storage_path('app/private/' . $product->file_path);
+
+        if (!file_exists($filePath)) {
+            return back()->withErrors(['error' => 'File tidak ditemukan di server. Hubungi admin.']);
+        }
+
+        return response()->download($filePath, basename($filePath));
+    }
+
+    public function cancel(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->payment_status === 'paid') {
+            return back()->withErrors(['error' => 'Order yang sudah dibayar tidak bisa dibatalkan. Hubungi admin.']);
+        }
+
+        if ($order->status === 'cancelled') {
+            return back()->withErrors(['error' => 'Order ini sudah dibatalkan sebelumnya.']);
+        }
+
+        $order->update([
+            'status'         => 'cancelled',
+            'payment_status' => 'unpaid',
+        ]);
+
+        return redirect()->route('member.orders.index')
+            ->with('success', 'Order #' . $order->order_number . ' berhasil dibatalkan.');
+    }
+
+    public function checkStatus(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->payment_method !== 'midtrans' || !$order->transaction_id) {
+            return back()->with('error', 'Metode pembayaran bukan Midtrans atau transaksi tidak ditemukan.');
+        }
+
+        \Midtrans\Config::$serverKey = \App\Models\Setting::get('midtrans_server_key');
+        \Midtrans\Config::$isProduction = (\App\Models\Setting::get('midtrans_is_production') == '1');
+
+        try {
+            $status = \Midtrans\Transaction::status($order->order_number);
+            
+            $transaction = $status->transaction_status;
+            
+            if ($transaction == 'settlement' || $transaction == 'capture') {
+                $order->update([
+                    'payment_status' => 'paid',
+                    'status' => 'completed'
+                ]);
+                return back()->with('success', 'Pembayaran berhasil dikonfirmasi!');
+            } else if ($transaction == 'pending') {
+                return back()->with('error', 'Pembayaran masih pending. Silakan selesaikan pembayaran Anda.');
+            } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
+                $order->update([
+                    'payment_status' => 'failed',
+                    'status' => 'cancelled'
+                ]);
+                return back()->with('error', 'Pembayaran gagal atau kedaluwarsa.');
+            }
+
+            return back()->with('info', 'Status pembayaran: ' . $transaction);
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengecek status: ' . $e->getMessage());
+        }
+    }
+
+    public function invoice(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $order->load('items.product', 'user');
+        return view('member.orders.invoice', compact('order'));
     }
 }

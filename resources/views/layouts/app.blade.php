@@ -20,9 +20,9 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#6366f1',
-                        secondary: '#4f46e5',
-                        dark: '#0f172a',
+                        primary: '#15283c', // Dark Blue Pluto
+                        secondary: '#ff5722', // Orange Pluto
+                        dark: '#0e1a27',
                     }
                 }
             }
@@ -41,20 +41,26 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <a href="{{ route('landing') }}" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                            appsakola
+                        <a href="{{ route('landing') }}" class="flex items-center space-x-3 group">
+                            @php $siteLogo = \App\Models\Setting::get('site_logo'); @endphp
+                            @if($siteLogo)
+                                <img src="{{ asset('storage/' . $siteLogo) }}" alt="Logo" class="h-8 w-auto">
+                            @endif
+                            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary group-hover:from-secondary group-hover:to-primary transition duration-300">
+                                {{ \App\Models\Setting::get('site_name', 'appsakola') }}
+                            </span>
                         </a>
                     </div>
                     <div class="flex items-center space-x-4">
                         @auth
-                            <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('member.dashboard') }}" class="text-sm font-medium text-slate-600 hover:text-primary transition">Dashboard</a>
+                            <a href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('member.dashboard') }}" class="text-sm font-medium text-slate-600 hover:text-secondary transition">Dashboard</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="text-sm font-medium text-slate-600 hover:text-red-500 transition">Logout</button>
                             </form>
                         @else
-                            <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-primary transition">Login</a>
-                            <a href="{{ route('register') }}" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-secondary transition shadow-lg shadow-primary/20">Sign Up</a>
+                            <a href="{{ route('login') }}" class="text-sm font-medium text-slate-600 hover:text-secondary transition">Login</a>
+                            <a href="{{ route('register') }}" class="px-4 py-2 bg-secondary text-white rounded-lg text-sm font-medium hover:bg-primary transition shadow-lg shadow-secondary/20">Sign Up</a>
                         @endauth
                     </div>
                 </div>

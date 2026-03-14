@@ -38,6 +38,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::patch('/orders/{order}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('orders.confirm-payment');
     
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -48,6 +49,7 @@ Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->prefix
     Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.update-role');
     
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::get('/settings/frontend', [SettingController::class, 'frontend'])->name('settings.frontend');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -79,9 +81,15 @@ Route::get('/checkout/{product:slug}', [MemberOrderController::class, 'checkout'
 
 Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
     Route::get('/dashboard', [MemberDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/products', [MemberDashboardController::class, 'products'])->name('products');
     
     // Checkout & Orders
     Route::post('/checkout/{product:slug}', [MemberOrderController::class, 'process'])->name('orders.process');
     Route::get('/orders', [MemberOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [MemberOrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/download', [MemberOrderController::class, 'download'])->name('orders.download');
+    Route::get('/orders/{order}/verify', [MemberOrderController::class, 'checkStatus'])->name('orders.verify');
+    Route::get('/orders/{order}/invoice', [MemberOrderController::class, 'invoice'])->name('orders.invoice');
+    Route::patch('/orders/{order}/cancel', [MemberOrderController::class, 'cancel'])->name('orders.cancel');
 });
+

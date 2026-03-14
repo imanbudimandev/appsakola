@@ -1,145 +1,217 @@
-@extends('layouts.app')
+@extends('layouts.member')
 
-@section('title', 'Order Details - ' . $order->order_number)
+@section('title', 'Detail Order #' . $order->order_number)
+@section('header', 'Detail Order')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 py-20">
-    <!-- Success Badge -->
-    <div class="text-center mb-10">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full mb-4 shadow-sm">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        </div>
-        <h1 class="text-3xl font-bold text-slate-900">Order Successfully Placed!</h1>
-        <p class="text-slate-500 mt-2">Order #{{ $order->order_number }}</p>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Order Info -->
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-[24px] border border-slate-200 p-8 shadow-sm">
-                <h3 class="text-xl font-bold text-slate-900 mb-6">Order Summary</h3>
-                <div class="space-y-4">
-                    @foreach($order->items as $item)
-                    <div class="flex items-center">
-                        <div class="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                            @if($item->product->thumbnail)
-                                <img src="{{ asset('storage/' . $item->product->thumbnail) }}" class="w-full h-full object-cover">
-                            @endif
-                        </div>
-                        <div class="ml-4 flex-1">
-                            <p class="font-bold text-slate-800">{{ $item->product->name }}</p>
-                            <p class="text-sm text-slate-500">1 x Rp {{ number_format($item->price, 0, ',', '.') }}</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-bold text-slate-900">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                
-                <div class="mt-8 pt-8 border-t border-slate-100 flex justify-between items-center">
-                    <span class="text-lg font-bold text-slate-600">Total Amount</span>
-                    <span class="text-2xl font-black text-primary">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+<div class="row column1">
+    {{-- Kiri: Info Produk --}}
+    <div class="col-md-8">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0 d-flex justify-content-between align-items-center w-100">
+                    <h2>Order #{{ $order->order_number }}</h2>
+                    <span class="text-muted" style="font-size:13px;">{{ $order->created_at->format('d M Y, H:i') }}</span>
                 </div>
             </div>
-
-            <!-- Payment Instructions -->
-            <div class="bg-white rounded-[24px] border border-slate-200 p-8 shadow-sm">
-                @if($order->payment_method === 'midtrans' && $order->payment_status === 'unpaid')
-                    <h3 class="text-xl font-bold text-slate-900 mb-6">Complete Automated Payment</h3>
-                    <div class="bg-indigo-50 rounded-2xl p-8 border border-indigo-100 text-center">
-                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/30">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <h4 class="text-lg font-bold text-slate-900 mb-2">Ready to Pay?</h4>
-                        <p class="text-slate-500 mb-8 max-w-sm mx-auto">Click the button below to open the secure payment gateway and choose your preferred method.</p>
-                        
-                        <button id="pay-button" class="px-10 py-4 bg-primary text-white rounded-2xl font-bold text-lg hover:bg-secondary transition shadow-2xl shadow-primary/40 inline-flex items-center space-x-3">
-                            <span>Pay with Midtrans</span>
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </button>
+            <div class="padding_infor_info">
+                @foreach($order->items as $item)
+                <div class="media mb-4 pb-4 border-bottom">
+                    <div class="mr-3" style="width:70px;height:70px;background:#eee;border-radius:10px;overflow:hidden;flex-shrink:0;">
+                        @if($item->product->thumbnail)
+                            <img src="{{ asset('storage/' . $item->product->thumbnail) }}" style="width:100%;height:100%;object-fit:cover;">
+                        @else
+                            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;">
+                                <i class="fa fa-image fa-lg"></i>
+                            </div>
+                        @endif
                     </div>
+                    <div class="media-body ml-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="font-weight-bold mb-1">{{ $item->product->name }}</h5>
+                            <p class="text-muted mb-0" style="font-size:13px;">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                        </div>
+                        @if($order->payment_status == 'paid' && $item->product->file_path)
+                            <a href="{{ route('member.orders.download', $order) }}" class="btn btn-success btn-sm ml-3" style="flex-shrink:0;">
+                                <i class="fa fa-download mr-1"></i> Download
+                            </a>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
 
-                    @php
-                        $isProduction = \App\Models\Setting::get('midtrans_is_production') == '1';
-                        $snapUrl = $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js';
-                        $clientKey = \App\Models\Setting::get('midtrans_client_key');
-                    @endphp
-                    
-                    <script src="{{ $snapUrl }}" data-client-key="{{ $clientKey }}"></script>
-                    <script type="text/javascript">
-                        var payButton = document.getElementById('pay-button');
-                        if(payButton) {
-                            payButton.onclick = function(){
-                                window.snap.pay('{{ $order->transaction_id }}', {
-                                    onSuccess: function(result){
-                                        window.location.reload();
-                                    },
-                                    onPending: function(result){
-                                        window.location.reload();
-                                    },
-                                    onError: function(result){
-                                        alert("Payment failed!");
-                                    },
-                                    onClose: function(){
-                                        // alert('you closed the popup without finishing the payment');
-                                    }
-                                });
-                            };
-                        }
-                    </script>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <h5 class="font-weight-bold">Total</h5>
+                    <h4 class="font-weight-bold text-primary">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</h4>
+                </div>
+            </div>
+        </div>
+
+        {{-- Instruksi Pembayaran --}}
+        @if($order->payment_status == 'unpaid' && $order->status != 'cancelled')
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0">
+                    @if($order->payment_method == 'midtrans')
+                        <h2><i class="fa fa-credit-card mr-2 text-primary"></i> Selesaikan Pembayaran</h2>
+                    @else
+                        <h2><i class="fa fa-bank mr-2 text-primary"></i> Instruksi Transfer Bank</h2>
+                    @endif
+                </div>
+            </div>
+            <div class="padding_infor_info">
+                @if($order->payment_method == 'midtrans')
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-4">Klik tombol di bawah untuk membuka halaman pembayaran. Pilih QRIS, Virtual Account, GoPay, dll.</p>
+                        @if($order->transaction_id)
+                            <button id="pay-button" class="btn btn-primary btn-lg px-5 mb-3">
+                                <i class="fa fa-credit-card mr-2"></i> Bayar Sekarang dengan Midtrans
+                            </button>
+                            <br>
+                            <a href="{{ route('member.orders.verify', $order) }}" class="btn btn-outline-info">
+                                <i class="fa fa-refresh mr-1"></i> Sudah Bayar? Cek Status Pembayaran
+                            </a>
+                        @else
+                            <div class="alert alert-danger">
+                                <i class="fa fa-exclamation-circle mr-2"></i>
+                                Snap Token tidak ditemukan. Silakan batalkan dan buat order ulang atau hubungi admin.
+                            </div>
+                        @endif
+                    </div>
                 @else
-                    <h3 class="text-xl font-bold text-slate-900 mb-6">Payment Instruction</h3>
-                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                        <p class="text-slate-700 leading-relaxed mb-4">
-                            Please transfer the total amount to the bank account listed below.
-                        </p>
-                        <div class="p-4 bg-white rounded-xl border border-slate-200 font-mono text-lg text-primary font-bold">
-                            {!! nl2br(e(\App\Models\Setting::get('manual_bank_info', 'Please contact admin for bank details.'))) !!}
-                        </div>
-                        <div class="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <p class="text-xs text-blue-700 leading-relaxed">
-                                Once payment is made, our admin will verify your transaction. You will be able to download your product from the member dashboard after verification.
-                            </p>
-                        </div>
+                    <div class="alert alert-info">
+                        <i class="fa fa-info-circle mr-2"></i>
+                        Silakan transfer total pembayaran ke rekening berikut, lalu tunggu konfirmasi dari admin.
+                    </div>
+                    <div class="p-4 bg-light rounded" style="font-family:monospace;font-size:15px;font-weight:bold;white-space:pre-line;">
+                        {!! nl2br(e(\App\Models\Setting::get('manual_bank_info', 'Hubungi admin untuk info rekening.'))) !!}
+                    </div>
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <i class="fa fa-exclamation-triangle mr-2"></i>
+                        Setelah transfer, admin akan memverifikasi dan mengaktifkan akses download Anda.
                     </div>
                 @endif
             </div>
         </div>
+        @endif
 
-        <!-- Sidebar Actions -->
-        <div class="space-y-6">
-            <div class="bg-white rounded-[24px] border border-slate-200 p-8 shadow-sm">
-                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Status Information</p>
-                <div class="space-y-4">
-                    <div>
-                        <p class="text-xs text-slate-500 mb-1">Order Status</p>
-                        <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase">
-                            {{ $order->status }}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 mb-1">Payment Method</p>
-                        <p class="font-bold text-slate-800">Manual Bank Transfer</p>
-                    </div>
-                </div>
-                
-                <div class="mt-8 pt-8 border-t border-slate-100">
-                    <a href="{{ route('member.orders.index') }}" class="w-full py-4 border-2 border-slate-100 text-slate-600 rounded-2xl font-bold text-center flex items-center justify-center hover:bg-slate-50 transition">
-                        My Order List
-                    </a>
-                </div>
+        @if($order->payment_status == 'paid')
+        <div class="alert alert-success">
+            <i class="fa fa-check-circle mr-2"></i>
+            <strong>Pembayaran terverifikasi!</strong> Silakan download produk Anda di atas.
+        </div>
+        @endif
+
+        @if($order->status == 'cancelled')
+        <div class="alert alert-danger">
+            <i class="fa fa-times-circle mr-2"></i>
+            <strong>Order ini telah dibatalkan.</strong>
+        </div>
+        @endif
+    </div>
+
+    {{-- Kanan: Status & Aksi --}}
+    <div class="col-md-4">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0"><h2>Status Order</h2></div>
             </div>
-
-            <div class="p-8 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[24px] text-white shadow-xl">
-                <h4 class="font-bold mb-2">Need Help?</h4>
-                <p class="text-indigo-100 text-sm mb-6">If you have any issues with your payment, contact our support team.</p>
-                <a href="mailto:{{ \App\Models\Setting::get('contact_email', 'support@appsakola.com') }}" class="block w-full py-3 bg-white text-indigo-800 rounded-xl font-bold text-center text-sm shadow-inner transition hover:bg-indigo-50">
-                    Contact Support
-                </a>
+            <div class="padding_infor_info">
+                <table class="table table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted" style="font-size:13px;">Status</td>
+                        <td>
+                            @if($order->status == 'cancelled')
+                                <span class="badge badge-danger">Dibatalkan</span>
+                            @elseif($order->status == 'completed')
+                                <span class="badge badge-primary">Selesai</span>
+                            @else
+                                <span class="badge badge-warning">Pending</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted" style="font-size:13px;">Pembayaran</td>
+                        <td>
+                            @if($order->payment_status == 'paid')
+                                <span class="badge badge-success">Lunas</span>
+                            @else
+                                <span class="badge badge-danger">Belum Bayar</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted" style="font-size:13px;">Metode</td>
+                        <td>
+                            @if($order->payment_method == 'midtrans')
+                                <span class="badge badge-info">Midtrans</span>
+                            @else
+                                <span class="badge badge-secondary">Transfer Bank</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted" style="font-size:13px;">Tanggal</td>
+                        <td style="font-size:13px;">{{ $order->created_at->format('d M Y') }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
+
+        @if($order->payment_status == 'unpaid' && $order->status != 'cancelled')
+        <div class="white_shd full margin_bottom_30">
+            <div class="padding_infor_info">
+                <form action="{{ route('member.orders.cancel', $order) }}" method="POST"
+                      onsubmit="return confirm('Batalkan order ini?\nOrder yang dibatalkan tidak bisa dikembalikan.')">
+                    @csrf
+                    @method('PATCH')
+                    <button type="submit" class="btn btn-outline-danger btn-block">
+                        <i class="fa fa-times mr-1"></i> Batalkan Order
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endif
+
+        <a href="{{ route('member.orders.invoice', $order) }}" target="_blank" class="btn btn-outline-primary btn-block mb-2">
+            <i class="fa fa-file-text-o mr-1"></i> Lihat Invoice
+        </a>
+
+        <a href="{{ route('member.orders.index') }}" class="btn btn-outline-secondary btn-block">
+            <i class="fa fa-arrow-left mr-1"></i> Kembali ke Riwayat
+        </a>
     </div>
 </div>
+
+{{-- Midtrans Snap JS --}}
+@if($order->payment_method === 'midtrans' && $order->payment_status === 'unpaid' && $order->transaction_id)
+@php
+    $isProduction = \App\Models\Setting::get('midtrans_is_production') == '1';
+    $snapUrl = $isProduction
+        ? 'https://app.midtrans.com/snap/snap.js'
+        : 'https://app.sandbox.midtrans.com/snap/snap.js';
+    $clientKey = \App\Models\Setting::get('midtrans_client_key');
+@endphp
+@push('scripts')
+<script src="{{ $snapUrl }}" data-client-key="{{ $clientKey }}"></script>
+<script>
+    document.getElementById('pay-button').onclick = function() {
+        window.snap.pay('{{ $order->transaction_id }}', {
+            onSuccess: function(result) {
+                alert('Pembayaran berhasil!');
+                window.location.reload();
+            },
+            onPending: function(result) {
+                alert('Pembayaran sedang diproses.');
+                window.location.reload();
+            },
+            onError: function(result) {
+                alert('Pembayaran gagal. Silakan coba lagi.');
+            },
+            onClose: function() {}
+        });
+    };
+</script>
+@endpush
+@endif
 @endsection

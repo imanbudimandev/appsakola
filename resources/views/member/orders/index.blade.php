@@ -1,70 +1,119 @@
-@extends('layouts.app')
+@extends('layouts.member')
 
-@section('title', 'My Orders')
+@section('title', 'Riwayat Pembelian')
+@section('header', 'Riwayat Pembelian')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-20">
-    <div class="mb-12">
-        <h1 class="text-4xl font-bold text-slate-900">Purchase History</h1>
-        <p class="text-slate-500 mt-2">Manage your orders and downloads here.</p>
-    </div>
+<div class="row column1">
+    <div class="col-md-12">
+        <div class="white_shd full margin_bottom_30">
+            <div class="full graph_head">
+                <div class="heading1 margin_0 d-flex justify-content-between align-items-center w-100">
+                    <h2>Daftar Order</h2>
+                    <div>
+                        <span class="badge badge-success mr-1">Lunas: {{ $orders->where('payment_status','paid')->count() }}</span>
+                        <span class="badge badge-warning mr-1">Menunggu: {{ $orders->where('payment_status','unpaid')->where('status','!=','cancelled')->count() }}</span>
+                        <span class="badge badge-danger">Dibatalkan: {{ $orders->where('status','cancelled')->count() }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="table_section padding_infor_info">
+                @forelse($orders as $order)
+                <div class="card mb-3 border-0 shadow-sm" style="border-radius:12px;overflow:hidden;">
+                    {{-- Header Order --}}
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa;">
+                        <div>
+                            <strong>#{{ $order->order_number }}</strong>
+                            <span class="text-muted ml-3" style="font-size:12px;"><i class="fa fa-clock-o mr-1"></i>{{ $order->created_at->format('d M Y, H:i') }}</span>
+                        </div>
+                        <div class="d-flex align-items-center" style="gap:8px;">
+                            @if($order->status == 'cancelled')
+                                <span class="badge badge-danger"><i class="fa fa-times mr-1"></i>Dibatalkan</span>
+                            @elseif($order->payment_status == 'paid')
+                                <span class="badge badge-success"><i class="fa fa-check mr-1"></i>Lunas</span>
+                            @else
+                                <span class="badge badge-warning"><i class="fa fa-clock-o mr-1"></i>Belum Bayar</span>
+                            @endif
 
-    @if($orders->isEmpty())
-        <div class="bg-white rounded-[40px] border border-slate-200 p-20 text-center shadow-sm">
-            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
-                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 118 0m-4 10v4m-8-8H4m0 0l-1-1m1 1l1-1m8 8h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            @if($order->payment_method == 'midtrans')
+                                <span class="badge badge-info">Midtrans</span>
+                            @else
+                                <span class="badge badge-secondary">Transfer Bank</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Produk --}}
+                    @foreach($order->items as $item)
+                    <div class="card-body py-3">
+                        <div class="media align-items-center">
+                            <div class="mr-3" style="width:60px;height:60px;background:#eee;border-radius:8px;overflow:hidden;flex-shrink:0;">
+                                @if($item->product->thumbnail)
+                                    <img src="{{ asset('storage/' . $item->product->thumbnail) }}" style="width:100%;height:100%;object-fit:cover;">
+                                @else
+                                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#bbb;">
+                                        <i class="fa fa-image"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="media-body">
+                                <h6 class="mb-0 font-weight-bold">{{ $item->product->name }}</h6>
+                                <small class="text-muted">Rp {{ number_format($item->price, 0, ',', '.') }}</small>
+                            </div>
+                            <div class="ml-auto text-right" style="flex-shrink:0;">
+                                @if($order->status == 'cancelled')
+                                    {{-- tidak ada aksi --}}
+                                @elseif($order->payment_status == 'paid')
+                                    <a href="{{ route('member.orders.download', $order) }}" class="btn btn-success btn-sm">
+                                        <i class="fa fa-download mr-1"></i> Download
+                                    </a>
+                                @elseif($order->payment_method == 'midtrans')
+                                    <a href="{{ route('member.orders.show', $order) }}" class="btn btn-primary btn-sm">
+                                        <i class="fa fa-credit-card mr-1"></i> Bayar Sekarang
+                                    </a>
+                                @else
+                                    <span class="text-warning" style="font-size:13px;"><i class="fa fa-hourglass-half mr-1"></i>Menunggu Konfirmasi</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    {{-- Footer Order --}}
+                    <div class="card-footer d-flex justify-content-between align-items-center" style="background:#f8f9fa;font-size:13px;">
+                        <span class="font-weight-bold">Total: Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
+                        <div style="gap:8px;display:flex;">
+                            <a href="{{ route('member.orders.invoice', $order) }}" target="_blank" class="btn btn-outline-primary btn-sm" title="Invoice">
+                                <i class="fa fa-file-text-o"></i>
+                            </a>
+                            <a href="{{ route('member.orders.show', $order) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fa fa-eye mr-1"></i> Detail
+                            </a>
+                            @if($order->payment_status == 'unpaid' && $order->status != 'cancelled')
+                                <form action="{{ route('member.orders.cancel', $order) }}" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Batalkan order #{{ $order->order_number }}?')">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fa fa-times mr-1"></i> Batalkan
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @empty
+                    <div class="text-center py-5">
+                        <i class="fa fa-shopping-bag fa-4x text-muted mb-4 d-block"></i>
+                        <h5>Belum ada order</h5>
+                        <p class="text-muted">Belum ada pembelian yang dilakukan.</p>
+                        <a href="{{ route('landing') }}" class="btn btn-primary mt-2">
+                            <i class="fa fa-search mr-1"></i> Lihat Produk
+                        </a>
+                    </div>
+                @endforelse
             </div>
-            <h2 class="text-2xl font-bold text-slate-800">No orders yet</h2>
-            <p class="text-slate-500 mt-2 max-w-xs mx-auto mb-10">You haven't made any purchases. Explore our marketplace to find premium digital assets.</p>
-            <a href="{{ route('landing') }}" class="px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-secondary transition shadow-xl shadow-primary/20">Explore Products</a>
         </div>
-    @else
-        <div class="bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-xl">
-            <div class="table-responsive">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="bg-slate-50/80 border-b border-slate-100 uppercase tracking-widest text-[10px] font-black text-slate-400">
-                            <th class="px-8 py-6">Order Details</th>
-                            <th class="px-8 py-6">Amount</th>
-                            <th class="px-8 py-6">Status</th>
-                            <th class="px-8 py-6 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @foreach($orders as $order)
-                        <tr class="hover:bg-slate-50/50 transition duration-300">
-                            <td class="px-8 py-6">
-                                <p class="font-bold text-slate-900 mb-1">#{{ $order->order_number }}</p>
-                                <p class="text-xs text-slate-400 font-medium tracking-tight">{{ $order->created_at->format('d M Y, H:i') }}</p>
-                            </td>
-                            <td class="px-8 py-6">
-                                <span class="font-bold text-slate-700">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
-                            </td>
-                            <td class="px-8 py-6">
-                                @php
-                                    $statusClasses = [
-                                        'pending' => 'bg-amber-100 text-amber-600 border-amber-200',
-                                        'completed' => 'bg-emerald-100 text-emerald-600 border-emerald-200',
-                                        'processing' => 'bg-blue-100 text-blue-600 border-blue-200',
-                                        'cancelled' => 'bg-red-100 text-red-600 border-red-200',
-                                    ];
-                                @endphp
-                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase border {{ $statusClasses[$order->status] ?? 'bg-slate-100 text-slate-600 border-slate-200' }}">
-                                    {{ $order->status }}
-                                </span>
-                            </td>
-                            <td class="px-8 py-6 text-right">
-                                <a href="{{ route('member.orders.show', $order) }}" class="inline-flex items-center px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-primary transition shadow-lg shadow-slate-900/10 hover:shadow-primary/20">
-                                    View Logic
-                                    <svg class="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"></path></svg>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    @endif
+    </div>
 </div>
 @endsection
